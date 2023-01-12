@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+        td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+
+  {% if data_schemas %}
+    <table>
+        <tr>
+           <th>#</th>
+           <th>Title</th>
+           <th>Modified</th>
+        </tr>
+        {% for data_schema in data_schemas %}
+            <tr>
+               <th>{{data_schema.id}}</th>
+               <th>{{data_schema.title}}</th>
+               <th>{{data_schema.modified}}</th>
+            </tr>
+        {% endfor %}
+    </table>
+  {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1><strong>New schema</strong></h1>
+
+<form action="{% url 'api:data_schema' data_schema.id %}" method="POST">
+    {% csrf_token %}
+
+        <div>
+            <label for="Name" class="required">Name</label><br>
+            <input id="Name" type="text" name="Name" value="{{data_schema.title}}" maxlength="100">
+        </div>
+
+        <div>
+            <label for="Column separator" class="required">Column separator</label><br>
+<!--            <input type="text" name="title" value="Column (,)" maxlength="100">-->
+            <input id="Column separator" type="text" name="Column separator" value="{{data_schema.column_separator}}" maxlength="100">
+        </div>
+
+        <div>
+            <label>String character</label><br>
+            <input type="text" name="title" value='Double-quote (")' maxlength="100">
+<!--            <input type="text" name="title" maxlength="100">-->
+        </div>
+        {% if schema_columns %}
+            <h1><strong>Schema columns</strong></h1>
+            {% for schema in schema_columns %}
+                <div style="display:inline-block">
+                    <label for="Column name" class="required">Column name</label><br>
+                    <input id="Column name" type="text" name="Column name" value="{{schema.name}}" maxlength="100"><br>
+                </div>
+                <div style="display:inline-block">
+                    <label for="Type" class="required">Type</label><br>
+<!--                    <input type="text" name="title" value="{{schema.get_type_display}}" maxlength="100"><br>-->
+                    <select id="Type" name="Type">
+                        {% for type_column in list_types %}
+                            {% if schema.get_type_display == type_column %}
+                                <option selected value="{{ type_column }}" />{{ type_column }}</option>
+                            {% else %}
+                                <option value="{{ type_column }}" />{{ type_column }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="display:inline-block">
+                    <label for="Order" class="required">Order</label><br>
+                    <input id="Order" type="text" name="Order" value="{{schema.order}}" maxlength="100"><br>
+                </div>
+                <br>
+            {% endfor %}
+        {% endif %}
+    <button type="submit">Import CSV</button>
+</form>
+
+</body>
+</html>
