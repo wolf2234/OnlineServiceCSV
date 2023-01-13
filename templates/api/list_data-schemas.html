@@ -24,6 +24,11 @@
           padding-bottom: 1%;
 
       }
+      .status {
+        background: #7FFF00;
+        color: white;
+        font-size: 10pt;
+      }
     </style>
 </head>
 <body>
@@ -42,6 +47,7 @@
            <th>#</th>
            <th>Title</th>
            <th>Modified</th>
+           <th>Status</th>
            <th>Action</th>
         </tr>
         {% for data_schema in data_schemas %}
@@ -49,7 +55,11 @@
                <th>{{data_schema.id}}</th>
                <th><a href="{% url 'api:data_schema' data_schema.id %}">{{data_schema.title}}</a></th>
                <th>{{data_schema.modified}}</th>
-               <th><a href="{% url 'api:generate_csv' data_schema.id %}">Download</a></th>
+               <th class="">{{data_schema.status}}</th>
+               <th><a href="{% url 'api:data_schema' data_schema.id %}">Edit schema</a> |
+                   <a href="{% url 'api:delete_schema' data_schema.id %}">Delete</a> |
+                   <a href="{% url 'api:generate_csv' data_schema.id %}">Download</a>
+               </th>
             </tr>
         {% endfor %}
     </table>

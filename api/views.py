@@ -38,11 +38,44 @@ def get_detail_data_schema(request, pk):
     data_schema = DataSchemas.objects.get(pk=pk)
     schema_columns = list(data_schema.schemas_set.all())
     list_types = [type_obj[1] for type_obj in CHOICES]
+
     if request.POST:
+        print(request.POST)
+        column_names = dict(request.POST).get('Column name')[0:-1]
+        types = dict(request.POST).get('Type')[0:-1]
+        orders = dict(request.POST).get('Order')[0:-1]
+
+        data_columns = [(obj.name, obj.type, obj.order, obj) for obj in schema_columns]
+        list_parameter = [(name, type_column, order_column) for name, type_column, order_column in zip(column_names, types, orders)]
+
+        name_schema = request.POST.get('Name')
+        separator = request.POST.get('Column separator')
         column_name = request.POST.get('Column name')
         type = request.POST.get('Type')
         order = request.POST.get('Order')
-        Schemas.objects.create(name=column_name, type=type, order=order, data_schema=data_schema)
+
+        if data_schema.title != name_schema:
+            data_schema.title = name_schema
+            data_schema.save()
+
+        if data_schema.column_separator != separator:
+            data_schema.column_separator = separator
+            data_schema.save()
+
+        for data_column, parameters in zip(data_columns, list_parameter):
+            if data_column[0] != parameters[0]:
+                data_column[3].name = parameters[0]
+
+            if data_column[1] != parameters[1]:
+                data_column[3].type = parameters[1]
+
+            if data_column[2] != parameters[2]:
+                data_column[3].order = parameters[2]
+
+            data_column[3].save()
+
+        if column_name and type and order:
+            Schemas.objects.create(name=column_name, type=type, order=order, data_schema=data_schema)
         return HttpResponseRedirect(reverse('api:data_schema', args=(pk,)))
         # generate_csv(request.POST, pk)
     return render(request, 'api/data_schema.html', {'data_schema': data_schema,
@@ -58,9 +91,11 @@ def create_schema(request):
         column_name = request.POST.get('Column name')
         type = request.POST.get('Type')
         order = request.POST.get('Order')
-        data_schema = DataSchemas.objects.create(title=name_schema, column_separator=separator)
+        data_schema = DataSchemas.objects.create(title=name_schema, column_separator=separator, status='Processing')
         if column_name and type and order:
             Schemas.objects.create(name=column_name, type=type, order=order, data_schema=data_schema)
+            data_schema.status = 'Ready'
+            data_schema.save()
         return redirect('/api/list_data_schemas/')
     else:
         return render(request, 'api/data_schema.html', {'list_types': list_types})
@@ -109,6 +144,16 @@ def generate_csv(request, pk):
     response = HttpResponse(filepath, content_type=mime_type)
     response['Content-Disposition'] = f"attachment; filename={filename}"
     return response
+
+
+def delete_schema(request, pk):
+    data_schema = DataSchemas.objects.get(pk=pk)
+    data_schema.delete()
+    return HttpResponseRedirect(reverse('api:list_data_schemas'))
+
+
+
+
 
 # def generate_csv(schema_data, pk):
 #     dict_schema_data = dict(schema_data)

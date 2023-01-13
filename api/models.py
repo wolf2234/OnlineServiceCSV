@@ -18,6 +18,7 @@ CHOICES = [
 class DataSchemas(models.Model):
     title = models.CharField("Name", max_length=100)
     column_separator = models.CharField("Column separator", max_length=100, default='')
+    status = models.CharField("Status", max_length=100)
     modified = models.DateTimeField("Modified", auto_now=True)
 
 
