@@ -17,9 +17,24 @@
         tr:nth-child(even) {
           background-color: #dddddd;
         }
+        .right {
+          display: block;
+          margin-left: 90%;
+          margin-right: 0%;
+          padding-bottom: 1%;
+
+      }
     </style>
 </head>
 <body>
+    <div style="display:inline-block"><h1><strong>Data schemas</strong></h1></div>
+
+    <div style="display:inline-block" class="right">
+        <form action="{% url 'api:create_schema' %}" method="GET">
+            {% csrf_token %}
+            <button type="submit">New schema</button>
+        </form>
+    </div>
 
   {% if data_schemas %}
     <table>
@@ -27,12 +42,14 @@
            <th>#</th>
            <th>Title</th>
            <th>Modified</th>
+           <th>Action</th>
         </tr>
         {% for data_schema in data_schemas %}
             <tr>
                <th>{{data_schema.id}}</th>
-               <th>{{data_schema.title}}</th>
+               <th><a href="{% url 'api:data_schema' data_schema.id %}">{{data_schema.title}}</a></th>
                <th>{{data_schema.modified}}</th>
+               <th><a href="{% url 'api:generate_csv' data_schema.id %}">Download</a></th>
             </tr>
         {% endfor %}
     </table>
