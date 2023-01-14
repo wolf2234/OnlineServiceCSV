@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -10,30 +11,32 @@ from .models import *
 import csv
 
 # Create your views here.
+url_login = 'http://127.0.0.1:8000/admin/login/?next=/admin/'
+
+# class LoginUser(View):
+#
+#     def get(self, request):
+#         return render(request, 'api/login.html')
+#
+#     def post(self, request):
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             return redirect('/api/list_data_schemas/')
+#         else:
+#             return render(request, 'api/login.html',
+#                           {'error_message': 'Incorrect username and / or password.'})
 
 
-class LoginUser(View):
-
-    def get(self, request):
-        return render(request, 'api/login.html')
-
-    def post(self, request):
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return render(request, 'api/index.html')
-        else:
-            return render(request, 'api/login.html',
-                          {'error_message': 'Incorrect username and / or password.'})
-
-
+@login_required(login_url=url_login)
 def get_list_data_schemas(request):
     data_schemas = DataSchemas.objects.all()
     return render(request, 'api/list_data-schemas.html', {'data_schemas': data_schemas})
 
 
+@login_required(login_url=url_login)
 def get_detail_data_schema(request, pk):
     data_schema = DataSchemas.objects.get(pk=pk)
     schema_columns = list(data_schema.schemas_set.all())
@@ -85,6 +88,7 @@ def get_detail_data_schema(request, pk):
                                                     'list_types': list_types})
 
 
+@login_required(login_url=url_login)
 def create_schema(request):
     list_types = [type_obj[1] for type_obj in CHOICES]
     if request.POST:
@@ -103,6 +107,7 @@ def create_schema(request):
         return render(request, 'api/data_schema.html', {'list_types': list_types})
 
 
+@login_required(login_url=url_login)
 def generate_csv(request, pk):
     data_schema = DataSchemas.objects.get(pk=pk)
     schema_columns = data_schema.schemas_set.all()
@@ -148,6 +153,7 @@ def generate_csv(request, pk):
     return response
 
 
+@login_required(login_url=url_login)
 def delete_schema(request, pk):
     data_schema = DataSchemas.objects.get(pk=pk)
     data_schema.delete()
@@ -183,3 +189,15 @@ def delete_schema(request, pk):
 #                     [column_name, type_field, order]
 #                 )
 #     return HttpResponseRedirect(reverse('api:data_schema', args=(pk,)))
+
+
+def delete_schema_field(request, pk):
+    schema = Schemas.objects.get(pk=pk)
+    data_schema_id = schema.data_schema.id
+    data_schema = DataSchemas.objects.get(pk=data_schema_id)
+    schema.delete()
+    if not data_schema.schemas_set.all():
+        data_schema.status = 'Processing'
+        data_schema.save()
+    return HttpResponseRedirect(reverse('api:data_schema', args=(data_schema_id,)))
+    # schema.delete()

@@ -21,6 +21,8 @@ class DataSchemas(models.Model):
     status = models.CharField("Status", max_length=100)
     modified = models.DateTimeField("Modified", auto_now=True)
 
+    
+
 
 class Schemas(models.Model):
     name = models.CharField("Column name", max_length=100)

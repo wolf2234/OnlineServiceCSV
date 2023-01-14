@@ -52,6 +52,9 @@
                     <label for="Order" class="required">Order</label><br>
                     <input id="Order" type="text" name="Order" value="{{schema.order}}" maxlength="100"><br>
                 </div>
+                <div style="display:inline-block">
+                    <a href="{% url 'api:schema_field' schema.id %}" style="text-decoration: none"><p style="color:red">Delete</p></a>
+                </div>
                 <br>
             {% endfor %}
 
@@ -74,6 +77,7 @@
             <div style="display:inline-block">
                     <label for="Order" class="required">Order</label><br>
                     <input id="Order" type="text" name="Order" maxlength="100"><br>
+
             </div>
             <br>
     <button type="submit">Add column</button>
