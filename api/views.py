@@ -11,23 +11,23 @@ from .models import *
 import csv
 
 # Create your views here.
-url_login = 'http://127.0.0.1:8000/admin/login/?next=/admin/'
+url_login = 'http://127.0.0.1:8000/api/login/'
 
-# class LoginUser(View):
-#
-#     def get(self, request):
-#         return render(request, 'api/login.html')
-#
-#     def post(self, request):
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(username=username, password=password)
-#         if user is not None:
-#             login(request, user)
-#             return redirect('/api/list_data_schemas/')
-#         else:
-#             return render(request, 'api/login.html',
-#                           {'error_message': 'Incorrect username and / or password.'})
+class LoginUser(View):
+
+    def get(self, request):
+        return render(request, 'api/login.html')
+
+    def post(self, request):
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/api/list_data_schemas/')
+        else:
+            return render(request, 'api/login.html',
+                          {'error_message': 'Incorrect username and / or password.'})
 
 
 @login_required(login_url=url_login)
