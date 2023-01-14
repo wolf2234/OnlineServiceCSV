@@ -191,6 +191,7 @@ def delete_schema(request, pk):
 #     return HttpResponseRedirect(reverse('api:data_schema', args=(pk,)))
 
 
+@login_required(login_url=url_login)
 def delete_schema_field(request, pk):
     schema = Schemas.objects.get(pk=pk)
     data_schema_id = schema.data_schema.id
