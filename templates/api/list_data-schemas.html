@@ -27,7 +27,7 @@
       .status {
         background: #7FFF00;
         color: white;
-        font-size: 10pt;
+        font-size: 12pt;
       }
     </style>
 </head>
@@ -55,7 +55,7 @@
                <th>{{data_schema.id}}</th>
                <th><a href="{% url 'api:data_schema' data_schema.id %}">{{data_schema.title}}</a></th>
                <th>{{data_schema.modified}}</th>
-               <th class="">{{data_schema.status}}</th>
+                <th>{{data_schema.status}}</th>
                <th><a href="{% url 'api:data_schema' data_schema.id %}">Edit schema</a> |
                    <a href="{% url 'api:delete_schema' data_schema.id %}">Delete</a> |
                    <a href="{% url 'api:generate_csv' data_schema.id %}">Download</a>

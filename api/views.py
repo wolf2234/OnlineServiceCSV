@@ -40,7 +40,6 @@ def get_detail_data_schema(request, pk):
     list_types = [type_obj[1] for type_obj in CHOICES]
 
     if request.POST:
-        print(request.POST)
         column_names = dict(request.POST).get('Column name')[0:-1]
         types = dict(request.POST).get('Type')[0:-1]
         orders = dict(request.POST).get('Order')[0:-1]
@@ -76,6 +75,9 @@ def get_detail_data_schema(request, pk):
 
         if column_name and type and order:
             Schemas.objects.create(name=column_name, type=type, order=order, data_schema=data_schema)
+            data_schema = DataSchemas.objects.get(pk=pk)
+            data_schema.status = 'Ready'
+            data_schema.save()
         return HttpResponseRedirect(reverse('api:data_schema', args=(pk,)))
         # generate_csv(request.POST, pk)
     return render(request, 'api/data_schema.html', {'data_schema': data_schema,
